@@ -1,0 +1,309 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial;
+    overflow: hidden;
+}
+
+#topUI {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    z-index: 100;
+}
+
+#settingsIcon {
+    width: 50px;
+    height: 50px;
+    background: gold;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+}
+
+#scoreDisplay {
+    background: white;
+    padding: 10px 30px;
+    border-radius: 25px;
+    font-size: 36px;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+#arrowsDisplay {
+    background: lightblue;
+    padding: 8px 15px;
+    border-radius: 25px;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.arrowIcon {
+    font-size: 20px;
+}
+
+#arrowCount {
+    font-weight: bold;
+    font-size: 28px;
+    margin-left: 5px;
+}
+
+#userIcon {
+    width: 50px;
+    height: 50px;
+    background: lightblue;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    font-weight: bold;
+    color: white;
+}
+
+/* Game Area */
+#gameArea {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* Sky */
+#sky {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 70%;
+    background: linear-gradient(to bottom, #87CEEB 0%, #B0E0E6 100%);
+}
+
+/* Clouds */
+.cloud {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 100px;
+    height: 80px;
+    width: 200px;
+}
+
+.cloud::before,
+.cloud::after {
+    content: '';
+    position: absolute;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 50%;
+}
+
+.cloud::before {
+    width: 100px;
+    height: 100px;
+    top: -50px;
+    left: 30px;
+}
+
+.cloud::after {
+    width: 120px;
+    height: 120px;
+    top: -60px;
+    right: 30px;
+}
+
+.cloud1 {
+    top: 20%;
+    left: 10%;
+}
+
+.cloud2 {
+    top: 30%;
+    right: 20%;
+    width: 250px;
+}
+
+.cloud3 {
+    top: 40%;
+    right: 40%;
+    width: 180px;
+}
+
+/* Bow Container */
+#bowContainer {
+    position: absolute;
+    left: 80px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 50;
+    transform-origin: center center;
+    transition: transform 0.1s ease;
+}
+
+/* Bow */
+#bow {
+    position: relative;
+    width: 60px;
+    height: 150px;
+    z-index: 50;
+}
+
+/* Bow curve */
+#bow::before {
+    content: '';
+    position: absolute;
+    width: 40px;
+    height: 140px;
+    border: 5px solid #654321;
+    border-left: none;
+    border-radius: 0 80% 80% 0;
+    left: 0;
+    top: 5px;
+}
+
+/* Bow Arrow (on bowstring) */
+#bowArrow {
+    position: absolute;
+    left: 5px;
+    top: 74px;
+    width: 70px;
+    height: 3px;
+    background: #8B4513;
+    z-index: 48;
+    pointer-events: none;
+    transition: left 0.2s ease, width 0.2s ease;
+}
+
+#bowArrow::before {
+    content: '';
+    position: absolute;
+    right: -8px;
+    top: -4px;
+    width: 0;
+    height: 0;
+    border-left: 12px solid #8B4513;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+}
+
+#bowArrow::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: -2px;
+    width: 8px;
+    height: 8px;
+    background: #654321;
+    border-radius: 50%;
+}
+
+/* Pulled state */
+#bowArrow.pulled {
+    left: -40px;
+    width: 110px;
+}
+
+/* Arrow */
+#arrow {
+    position: fixed;
+    width: 80px;
+    height: 5px;
+    background: #8B4513;
+    display: none;
+    z-index: 45;
+    transform-origin: left center;
+}
+
+#arrow::before {
+    content: '';
+    position: absolute;
+    right: -10px;
+    top: -3px;
+    width: 0;
+    height: 0;
+    border-left: 15px solid #8B4513;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+}
+
+/* Target */
+#target {
+    position: absolute;
+    right: 100px;
+    top: 25%;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    z-index: 40;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.ring {
+    position: absolute;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.ring1 {
+    width: 150px;
+    height: 150px;
+    background: #D4AF37;
+    border: 3px solid #000;
+}
+
+.ring2 {
+    width: 110px;
+    height: 110px;
+    background: #4169E1;
+}
+
+.ring3 {
+    width: 70px;
+    height: 70px;
+    background: red;
+}
+
+.ring4 {
+    width: 30px;
+    height: 30px;
+    background: yellow;
+}
+
+/* Landscape */
+#landscape {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 30%;
+}
+
+.tree {
+    position: absolute;
+    font-size: 80px;
+    bottom: 100px;
+    z-index: 30;
+}
+
+.tree1 {
+    left: 5%;
+}
+
+.tree2 {
+    left: 15%;
+}
+
+/* Ground */
+#ground {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 120px;
+    background: linear-gradient(to bottom, #90EE90 0%, #228B22 50%, #654321 80%, #4B3621 100%);
+}
