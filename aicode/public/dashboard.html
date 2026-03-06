@@ -96,7 +96,14 @@
         window.onload = async () => {
             try {
                 const response = await fetch('/dashboard');
-                const data = await response.json();
+                
+                let data;
+                try {
+                    const text = await response.text();
+                    data = text ? JSON.parse(text) : { success: false, message: 'Empty response' };
+                } catch (e) {
+                    data = { success: false, message: 'Invalid server response' };
+                }
                 
                 if (response.ok && data.success) {
                     document.getElementById('welcomeMessage').textContent = data.message;
@@ -120,7 +127,7 @@
             } catch (error) {
                 document.getElementById('message').style.display = 'block';
                 document.getElementById('message').className = 'message error';
-                document.getElementById('message').textContent = 'Error: ' + error.message;
+                document.getElementById('message').textContent = 'Network error: ' + error.message;
             }
         };
 

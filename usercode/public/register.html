@@ -124,24 +124,29 @@
                     body: JSON.stringify({ username, password })
                 });
                 
-                const data = await response.text();
+                let data;
+                try {
+                    data = await response.text();
+                } catch (e) {
+                    data = 'Server error - could not read response';
+                }
                 
                 messageDiv.style.display = 'block';
                 if (response.ok) {
                     messageDiv.className = 'message success';
-                    messageDiv.textContent = data;
+                    messageDiv.textContent = data || 'User registered successfully';
                     document.getElementById('registerForm').reset();
                     setTimeout(() => {
                         window.location.href = 'login.html';
                     }, 1500);
                 } else {
                     messageDiv.className = 'message error';
-                    messageDiv.textContent = data;
+                    messageDiv.textContent = data || 'Registration failed';
                 }
             } catch (error) {
                 messageDiv.style.display = 'block';
                 messageDiv.className = 'message error';
-                messageDiv.textContent = 'Error: ' + error.message;
+                messageDiv.textContent = 'Network error: ' + error.message;
             }
         });
     </script>

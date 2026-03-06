@@ -76,7 +76,13 @@
         window.onload = async () => {
             try {
                 const response = await fetch('/dashboard');
-                const data = await response.text();
+                
+                let data;
+                try {
+                    data = await response.text();
+                } catch (e) {
+                    data = 'Error loading dashboard';
+                }
                 
                 if (response.ok) {
                     document.getElementById('welcomeMessage').textContent = data;
@@ -89,7 +95,7 @@
             } catch (error) {
                 document.getElementById('message').style.display = 'block';
                 document.getElementById('message').className = 'message error';
-                document.getElementById('message').textContent = 'Error: ' + error.message;
+                document.getElementById('message').textContent = 'Network error: ' + error.message;
             }
         };
 

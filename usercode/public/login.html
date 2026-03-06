@@ -124,23 +124,28 @@
                     body: JSON.stringify({ username, password })
                 });
                 
-                const data = await response.text();
+                let data;
+                try {
+                    data = await response.text();
+                } catch (e) {
+                    data = 'Server error - could not read response';
+                }
                 
                 messageDiv.style.display = 'block';
                 if (response.ok) {
                     messageDiv.className = 'message success';
-                    messageDiv.textContent = data;
+                    messageDiv.textContent = data || 'Login successful';
                     setTimeout(() => {
                         window.location.href = 'dashboard.html';
                     }, 1000);
                 } else {
                     messageDiv.className = 'message error';
-                    messageDiv.textContent = data;
+                    messageDiv.textContent = data || 'Login failed';
                 }
             } catch (error) {
                 messageDiv.style.display = 'block';
                 messageDiv.className = 'message error';
-                messageDiv.textContent = 'Error: ' + error.message;
+                messageDiv.textContent = 'Network error: ' + error.message;
             }
         });
     </script>

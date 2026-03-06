@@ -135,12 +135,18 @@
                     body: JSON.stringify({ username, password })
                 });
                 
-                const data = await response.json();
+                let data;
+                try {
+                    const text = await response.text();
+                    data = text ? JSON.parse(text) : { success: false, message: 'Empty response from server' };
+                } catch (e) {
+                    data = { success: false, message: 'Invalid server response' };
+                }
                 
                 messageDiv.style.display = 'block';
                 if (response.ok && data.success) {
                     messageDiv.className = 'message success';
-                    messageDiv.textContent = data.message;
+                    messageDiv.textContent = data.message || 'Login successful';
                     setTimeout(() => {
                         window.location.href = 'dashboard.html';
                     }, 1000);
@@ -151,7 +157,7 @@
             } catch (error) {
                 messageDiv.style.display = 'block';
                 messageDiv.className = 'message error';
-                messageDiv.textContent = 'Error: ' + error.message;
+                messageDiv.textContent = 'Network error: ' + error.message;
             }
         });
     </script>
