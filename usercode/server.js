@@ -10,6 +10,9 @@ const PORT = 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Serve static files
+app.use(express.static('public'));
+
 // Session configuration
 app.use(session({
     secret: 'mysecretkey',

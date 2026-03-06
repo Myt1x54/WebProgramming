@@ -15,6 +15,9 @@ connectDB();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Serve static files
+app.use(express.static('public'));
+
 // Session configuration with enhanced security
 app.use(session({
     secret: process.env.SESSION_SECRET,
