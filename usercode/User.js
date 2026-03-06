@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 
-// User Schema
 const userSchema = new mongoose.Schema({
     username: {
         type: String,
@@ -15,7 +14,6 @@ const userSchema = new mongoose.Schema({
 
 const UserModel = mongoose.model('User', userSchema);
 
-// User Class
 class User {
     constructor(username, password) {
         this.username = username;

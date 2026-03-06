@@ -1,9 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
-/**
- * User Schema with validation
- */
 const userSchema = new mongoose.Schema({
     username: {
         type: String,
@@ -26,22 +23,14 @@ const userSchema = new mongoose.Schema({
 
 const UserModel = mongoose.model('User', userSchema);
 
-/**
- * User Class with enhanced security and error handling
- */
 class User {
     constructor(username, password) {
         this.username = username;
         this.password = password;
     }
 
-    /**
-     * Register a new user with password hashing
-     * @returns {Object} - Success message or error
-     */
     async register() {
         try {
-            // Check if user already exists
             const existingUser = await UserModel.findOne({ username: this.username });
             if (existingUser) {
                 return {
@@ -50,11 +39,9 @@ class User {
                 };
             }
 
-            // Hash password before saving
             const saltRounds = 10;
             const hashedPassword = await bcrypt.hash(this.password, saltRounds);
 
-            // Create new user
             const newUser = new UserModel({
                 username: this.username,
                 password: hashedPassword
@@ -91,7 +78,6 @@ class User {
                 };
             }
 
-            // Compare password with hashed password
             const isPasswordValid = await bcrypt.compare(this.password, user.password);
             
             if (isPasswordValid) {
@@ -118,11 +104,6 @@ class User {
         }
     }
 
-    /**
-     * Static method to find user by username
-     * @param {String} username 
-     * @returns {Object} - User object or null
-     */
     static async findByUsername(username) {
         try {
             return await UserModel.findOne({ username });

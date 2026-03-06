@@ -1,13 +1,7 @@
-/**
- * Authentication Middleware
- * Protects routes that require user authentication
- */
 const isAuthenticated = (req, res, next) => {
     if (req.session && req.session.user) {
-        // User is authenticated, proceed to next middleware
         next();
     } else {
-        // User is not authenticated
         res.status(401).json({
             success: false,
             message: 'Authentication required. Please login first.'
@@ -15,10 +9,6 @@ const isAuthenticated = (req, res, next) => {
     }
 };
 
-/**
- * Validation Middleware
- * Validates user input for registration and login
- */
 const { body, validationResult } = require('express-validator');
 
 const validateRegistration = [

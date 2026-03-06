@@ -8,26 +8,21 @@ const { isAuthenticated, validateRegistration, validateLogin } = require('./midd
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// Serve static files
 app.use(express.static('public'));
 
-// Session configuration with enhanced security
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
-        secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+        secure: process.env.NODE_ENV === 'production',
         httpOnly: true,
-        maxAge: 1000 * 60 * 60 * 24 // 24 hours
+        maxAge: 1000 * 60 * 60 * 24
     }
 }));
 
-// Home Route
 app.get('/', (req, res) => {
     res.json({
         message: 'Welcome to Login System API',
@@ -40,11 +35,6 @@ app.get('/', (req, res) => {
     });
 });
 
-/**
- * Register Route
- * POST /register
- * Body: { username, password }
- */
 app.post('/register', validateRegistration, async (req, res) => {
     try {
         const { username, password } = req.body;
@@ -72,11 +62,6 @@ app.post('/register', validateRegistration, async (req, res) => {
     }
 });
 
-/**
- * Login Route
- * POST /login
- * Body: { username, password }
- */
 app.post('/login', validateLogin, async (req, res) => {
     try {
         const { username, password } = req.body;
@@ -85,7 +70,6 @@ app.post('/login', validateLogin, async (req, res) => {
         const result = await user.login();
         
         if (result.success) {
-            // Create session
             req.session.user = username;
             req.session.loginTime = new Date();
             
@@ -108,11 +92,6 @@ app.post('/login', validateLogin, async (req, res) => {
     }
 });
 
-/**
- * Dashboard Route (Protected)
- * GET /dashboard
- * Requires authentication
- */
 app.get('/dashboard', isAuthenticated, (req, res) => {
     res.json({
         success: true,
@@ -122,11 +101,6 @@ app.get('/dashboard', isAuthenticated, (req, res) => {
     });
 });
 
-/**
- * Logout Route
- * GET /logout
- * Destroys the session
- */
 app.get('/logout', (req, res) => {
     if (req.session.user) {
         const username = req.session.user;
@@ -153,7 +127,6 @@ app.get('/logout', (req, res) => {
     }
 });
 
-// 404 Handler
 app.use((req, res) => {
     res.status(404).json({
         success: false,
@@ -161,7 +134,6 @@ app.use((req, res) => {
     });
 });
 
-// Error Handler
 app.use((err, req, res, next) => {
     console.error('Server error:', err);
     res.status(500).json({
@@ -170,7 +142,6 @@ app.use((err, req, res, next) => {
     });
 });
 
-// Start Server - Connect to MongoDB first
 const startServer = async () => {
     try {
         await connectDB();
@@ -186,7 +157,6 @@ const startServer = async () => {
 
 startServer();
 
-// Graceful shutdown
 process.on('SIGTERM', () => {
     console.log('SIGTERM signal received: closing HTTP server');
     process.exit(0);
