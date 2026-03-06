@@ -2,8 +2,15 @@ const mongoose = require('mongoose');
 
 // User Schema
 const userSchema = new mongoose.Schema({
-    username: String,
-    password: String
+    username: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    password: {
+        type: String,
+        required: true
+    }
 });
 
 const UserModel = mongoose.model('User', userSchema);
@@ -16,12 +23,19 @@ class User {
     }
 
     async register() {
-        const newUser = new UserModel({
-            username: this.username,
-            password: this.password
-        });
-        await newUser.save();
-        return 'User registered successfully';
+        try {
+            const newUser = new UserModel({
+                username: this.username,
+                password: this.password
+            });
+            await newUser.save();
+            return 'User registered successfully';
+        } catch (error) {
+            if (error.code === 11000) {
+                throw new Error('Username already exists');
+            }
+            throw error;
+        }
     }
 
     async login() {

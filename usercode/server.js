@@ -31,23 +31,33 @@ function isAuthenticated(req, res, next) {
 
 // Register Route
 app.post('/register', async (req, res) => {
-    const { username, password } = req.body;
-    const user = new User(username, password);
-    const message = await user.register();
-    res.send(message);
+    try {
+        const { username, password } = req.body;
+        const user = new User(username, password);
+        const message = await user.register();
+        res.send(message);
+    } catch (error) {
+        console.error('Register error:', error);
+        res.status(400).send(error.message || 'Registration failed');
+    }
 });
 
 // Login Route
 app.post('/login', async (req, res) => {
-    const { username, password } = req.body;
-    const user = new User(username, password);
-    const result = await user.login();
-    
-    if (result.success) {
-        req.session.user = username;
-        res.send(result.message);
-    } else {
-        res.status(401).send(result.message);
+    try {
+        const { username, password } = req.body;
+        const user = new User(username, password);
+        const result = await user.login();
+        
+        if (result.success) {
+            req.session.user = username;
+            res.send(result.message);
+        } else {
+            res.status(401).send(result.message);
+        }
+    } catch (error) {
+        console.error('Login error:', error);
+        res.status(500).send('Login failed');
     }
 });
 
