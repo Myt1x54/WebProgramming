@@ -28,6 +28,7 @@ const normalRunComments = [
 
 const BALL_DURATION_MS = 1300;
 const SWING_DURATION_MS = 220;
+const SHOT_FOLLOW_THROUGH_MS = 520;
 
 function getCommentaryForOutcome(outcome) {
   if (outcome === 'WICKET') {
@@ -48,6 +49,7 @@ export default function Game() {
   const [ballProgress, setBallProgress] = useState(0);
   const [isBallRunning, setIsBallRunning] = useState(false);
   const [isSwinging, setIsSwinging] = useState(false);
+  const [activeShotOutcome, setActiveShotOutcome] = useState(null);
   const [commentaryText, setCommentaryText] = useState('Pick a style and time your shot.');
 
   const sliderRafRef = useRef(0);
@@ -105,7 +107,7 @@ export default function Game() {
     };
   }, []);
 
-  const startBallAnimation = (onComplete) => {
+  const startBallAnimation = (outcome, onComplete) => {
     setIsBallRunning(true);
     setBallProgress(0);
 
@@ -114,17 +116,32 @@ export default function Game() {
 
     const animate = (ts) => {
       const elapsed = ts - start;
-      const progress = Math.min(1, elapsed / BALL_DURATION_MS);
-      setBallProgress(progress);
+      const incomingProgress = Math.min(1, elapsed / BALL_DURATION_MS);
+      let followThroughProgress = 0;
 
-      if (!swingTriggered && progress >= 0.82) {
+      if (incomingProgress < 1) {
+        setBallProgress(incomingProgress);
+      } else if (outcome !== 'WICKET') {
+        const followElapsed = elapsed - BALL_DURATION_MS;
+        followThroughProgress = Math.min(1, followElapsed / SHOT_FOLLOW_THROUGH_MS);
+        // Progress range [1,2] is reserved for post-contact flight.
+        setBallProgress(1 + followThroughProgress);
+      } else {
+        setBallProgress(1);
+      }
+
+      if (!swingTriggered && incomingProgress >= 0.82) {
         swingTriggered = true;
         setIsSwinging(true);
         clearTimeout(swingTimeoutRef.current);
         swingTimeoutRef.current = setTimeout(() => setIsSwinging(false), SWING_DURATION_MS);
       }
 
-      if (progress < 1) {
+      const animationDone = outcome === 'WICKET'
+        ? incomingProgress >= 1
+        : incomingProgress >= 1 && followThroughProgress >= 1;
+
+      if (!animationDone) {
         ballRafRef.current = requestAnimationFrame(animate);
         return;
       }
@@ -145,14 +162,16 @@ export default function Game() {
 
     // Shot result is mapped from current slider position only.
     const outcome = getOutcomeFromSlider(sliderPosition, segments);
+    setActiveShotOutcome(outcome);
 
-    startBallAnimation(() => {
+    startBallAnimation(outcome, () => {
       setGameState((current) => {
         const updated = updateScore(current, outcome);
         return updated;
       });
       setCommentaryText(getCommentaryForOutcome(outcome));
       setBallProgress(0);
+      setActiveShotOutcome(null);
     });
   };
 
@@ -175,6 +194,7 @@ export default function Game() {
     setBallProgress(0);
     setIsBallRunning(false);
     setIsSwinging(false);
+    setActiveShotOutcome(null);
     setCommentaryText('Fresh innings. Time your first shot.');
     sliderLastTsRef.current = 0;
   };
@@ -213,6 +233,7 @@ export default function Game() {
           <Pitch
             ballProgress={ballProgress}
             isSwinging={isSwinging}
+            activeOutcome={activeShotOutcome}
             lastOutcome={gameState.lastOutcome}
           />
           <PowerBar
