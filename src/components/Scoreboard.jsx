@@ -1,4 +1,4 @@
-import { getBallsRemaining, getOversDisplay } from '../logic/gameEngine';
+import { getBallsRemaining, getOversDisplay, getOversRemainingDisplay } from '../logic/gameEngine';
 
 function ScoreCard({ label, value }) {
   return (
@@ -17,6 +17,7 @@ export default function Scoreboard({ runs, wickets, ballsPlayed }) {
         <ScoreCard label="Runs" value={runs} />
         <ScoreCard label="Wickets" value={wickets} />
         <ScoreCard label="Overs" value={getOversDisplay(ballsPlayed)} />
+        <ScoreCard label="Overs Left" value={getOversRemainingDisplay(ballsPlayed)} />
         <ScoreCard label="Balls Left" value={getBallsRemaining(ballsPlayed)} />
       </div>
     </section>

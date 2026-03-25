@@ -20,6 +20,13 @@ export function getBallsRemaining(ballsPlayed) {
   return Math.max(0, TOTAL_BALLS - ballsPlayed);
 }
 
+export function getOversRemainingDisplay(ballsPlayed) {
+  const ballsRemaining = getBallsRemaining(ballsPlayed);
+  const over = Math.floor(ballsRemaining / 6);
+  const ballInOver = ballsRemaining % 6;
+  return `${over}.${ballInOver}`;
+}
+
 export function isGameOver(ballsPlayed, wickets) {
   return ballsPlayed >= TOTAL_BALLS || wickets >= TOTAL_WICKETS;
 }

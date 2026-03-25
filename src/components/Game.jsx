@@ -53,6 +53,7 @@ export default function Game() {
   const sliderRafRef = useRef(0);
   const sliderLastTsRef = useRef(0);
   const ballRafRef = useRef(0);
+  const swingTimeoutRef = useRef(0);
 
   const segments = useMemo(
     () => buildProbabilitySegments(gameState.battingStyle),
@@ -100,6 +101,7 @@ export default function Game() {
   useEffect(() => {
     return () => {
       cancelAnimationFrame(ballRafRef.current);
+      clearTimeout(swingTimeoutRef.current);
     };
   }, []);
 
@@ -108,11 +110,19 @@ export default function Game() {
     setBallProgress(0);
 
     const start = performance.now();
+    let swingTriggered = false;
 
     const animate = (ts) => {
       const elapsed = ts - start;
       const progress = Math.min(1, elapsed / BALL_DURATION_MS);
       setBallProgress(progress);
+
+      if (!swingTriggered && progress >= 0.82) {
+        swingTriggered = true;
+        setIsSwinging(true);
+        clearTimeout(swingTimeoutRef.current);
+        swingTimeoutRef.current = setTimeout(() => setIsSwinging(false), SWING_DURATION_MS);
+      }
 
       if (progress < 1) {
         ballRafRef.current = requestAnimationFrame(animate);
@@ -136,9 +146,6 @@ export default function Game() {
     // Shot result is mapped from current slider position only.
     const outcome = getOutcomeFromSlider(sliderPosition, segments);
 
-    setIsSwinging(true);
-    setTimeout(() => setIsSwinging(false), SWING_DURATION_MS);
-
     startBallAnimation(() => {
       setGameState((current) => {
         const updated = updateScore(current, outcome);
@@ -160,6 +167,7 @@ export default function Game() {
   const handleRestart = () => {
     cancelAnimationFrame(sliderRafRef.current);
     cancelAnimationFrame(ballRafRef.current);
+    clearTimeout(swingTimeoutRef.current);
 
     setGameState(resetGame('aggressive'));
     setSliderPosition(0);
@@ -173,6 +181,7 @@ export default function Game() {
 
   const shotLabel = isBallRunning ? 'Ball In Play...' : 'Play Shot';
   const canPlay = !isBallRunning && !gameState.gameOver;
+  const canRestart = !isBallRunning;
 
   return (
     <main className="game-shell">
@@ -192,7 +201,9 @@ export default function Game() {
             battingStyle={gameState.battingStyle}
             onStyleChange={handleStyleChange}
             onPlayBall={handlePlayBall}
+            onRestart={handleRestart}
             canPlay={canPlay}
+            canRestart={canRestart}
             shotLabel={shotLabel}
           />
           <Commentary text={commentaryText} />

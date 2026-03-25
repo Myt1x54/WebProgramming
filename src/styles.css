@@ -145,6 +145,13 @@ button:disabled {
   color: #fff;
 }
 
+.restart-btn {
+  width: 100%;
+  margin-top: 8px;
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
 .commentary-box p {
   margin: 0;
   color: #fef3c7;

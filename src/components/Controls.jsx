@@ -2,7 +2,9 @@ export default function Controls({
   battingStyle,
   onStyleChange,
   onPlayBall,
+  onRestart,
   canPlay,
+  canRestart,
   shotLabel,
 }) {
   return (
@@ -34,6 +36,15 @@ export default function Controls({
         disabled={!canPlay}
       >
         {shotLabel}
+      </button>
+
+      <button
+        type="button"
+        className="restart-btn"
+        onClick={onRestart}
+        disabled={!canRestart}
+      >
+        Restart Game
       </button>
     </section>
   );
